@@ -8,9 +8,24 @@ type IOSVideoElement = HTMLVideoElement & {
 
 export default function MemoryPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [needsInteraction, setNeedsInteraction] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [actionIcon, setActionIcon] = useState<"forward" | null>(null);
   const tapTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const iconTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastTapRef = useRef(0);
+
+  const showActionIcon = useCallback((type: "forward") => {
+    setActionIcon(type);
+
+    if (iconTimeoutRef.current) {
+      clearTimeout(iconTimeoutRef.current);
+    }
+
+    iconTimeoutRef.current = setTimeout(() => {
+      setActionIcon(null);
+      iconTimeoutRef.current = null;
+    }, 420);
+  }, []);
 
   const startPlayback = useCallback(async () => {
     const video = videoRef.current;
@@ -29,10 +44,8 @@ export default function MemoryPage() {
         }
       }
 
-      setNeedsInteraction(false);
-    } catch {
-      setNeedsInteraction(true);
-    }
+      setIsPaused(false);
+    } catch {}
   }, []);
 
   useEffect(() => {
@@ -41,6 +54,10 @@ export default function MemoryPage() {
     return () => {
       if (tapTimeoutRef.current) {
         clearTimeout(tapTimeoutRef.current);
+      }
+
+      if (iconTimeoutRef.current) {
+        clearTimeout(iconTimeoutRef.current);
       }
     };
   }, [startPlayback]);
@@ -52,14 +69,13 @@ export default function MemoryPage() {
     if (video.paused) {
       try {
         await video.play();
-        setNeedsInteraction(false);
-      } catch {
-        setNeedsInteraction(true);
-      }
+        setIsPaused(false);
+      } catch {}
       return;
     }
 
     video.pause();
+    setIsPaused(true);
   }, []);
 
   const fastForward = useCallback(() => {
@@ -68,7 +84,8 @@ export default function MemoryPage() {
 
     const nextTime = Math.min(video.currentTime + 10, video.duration || video.currentTime + 10);
     video.currentTime = nextTime;
-  }, []);
+    showActionIcon("forward");
+  }, [showActionIcon]);
 
   const handleTap = useCallback(() => {
     const now = Date.now();
@@ -97,13 +114,26 @@ export default function MemoryPage() {
         ref={videoRef}
         className="h-full w-full object-cover"
         src="/memory-video.mp4"
+        autoPlay
         playsInline
         preload="auto"
+        onPlay={() => setIsPaused(false)}
+        onPause={() => setIsPaused(true)}
       />
 
-      {needsInteraction ? (
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/35 px-6 text-center text-lg font-semibold text-white">
-          Tap once to play/pause. Double tap to fast forward 10s.
+      {isPaused ? (
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <div className="rounded-full border border-white/35 bg-black/30 px-5 py-3 text-2xl text-white backdrop-blur-[1px]">
+            &#10074;&#10074;
+          </div>
+        </div>
+      ) : null}
+
+      {actionIcon === "forward" ? (
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <div className="rounded-full border border-white/35 bg-black/30 px-5 py-3 text-lg font-semibold text-white backdrop-blur-[1px]">
+            &#9193; 10s
+          </div>
         </div>
       ) : null}
     </main>
