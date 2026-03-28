@@ -142,7 +142,7 @@ export default function MemoryPage() {
 
           {!hasStarted ? (
             <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-black/55 p-4">
-              <div className="font-serif text-lg font-medium tracking-[0.12em] text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.65)]">
+              <div className="text-base font-semibold uppercase tracking-[0.2em] text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.65)]">
                 Tap to play
               </div>
             </div>
