@@ -6,7 +6,7 @@ type IOSVideoElement = HTMLVideoElement & {
   webkitEnterFullscreen?: () => void;
 };
 
-export default function Video1Page() {
+export default function MemoryPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPaused, setIsPaused] = useState(false);
   const [actionIcon, setActionIcon] = useState<"forward" | null>(null);
@@ -35,6 +35,7 @@ export default function Video1Page() {
       video.currentTime = 0;
       await video.play();
 
+      // Some browsers support fullscreen only after a user gesture.
       if (document.fullscreenElement == null) {
         try {
           await video.requestFullscreen();
@@ -108,33 +109,38 @@ export default function Video1Page() {
   }, [fastForward, togglePausePlay]);
 
   return (
-    <main className="fixed inset-0 bg-black" onPointerUp={handleTap}>
-      <video
-        ref={videoRef}
-        className="h-full w-full object-cover"
-        src="/video1.mp4"
-        autoPlay
-        playsInline
-        preload="auto"
-        onPlay={() => setIsPaused(false)}
-        onPause={() => setIsPaused(true)}
-      />
+    <main className="fixed inset-0 bg-black flex items-center justify-center" onPointerUp={handleTap}>
+      <div className="relative w-full h-full max-w-lg max-h-screen flex items-center justify-center" style={{perspective: '1000px'}}>
+        {/* Polaroid Frame */}
+        <div className="bg-white p-4 pb-12 shadow-2xl relative" style={{aspectRatio: '3/4'}}>
+          <video
+            ref={videoRef}
+            className="w-full h-full object-cover bg-black"
+            src="/memory-video.mp4"
+            autoPlay
+            playsInline
+            preload="auto"
+            onPlay={() => setIsPaused(false)}
+            onPause={() => setIsPaused(true)}
+          />
 
-      {isPaused ? (
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="rounded-full border border-white/35 bg-black/30 px-5 py-3 text-2xl text-white backdrop-blur-[1px]">
-            &#10074;&#10074;
-          </div>
-        </div>
-      ) : null}
+          {isPaused ? (
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-center p-4">
+              <div className="rounded-full border border-white/35 bg-black/30 px-5 py-3 text-2xl text-white backdrop-blur-[1px]">
+                &#10074;&#10074;
+              </div>
+            </div>
+          ) : null}
 
-      {actionIcon === "forward" ? (
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="rounded-full border border-white/35 bg-black/30 px-5 py-3 text-lg font-semibold text-white backdrop-blur-[1px]">
-            &#9193; 10s
-          </div>
+          {actionIcon === "forward" ? (
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-center p-4">
+              <div className="rounded-full border border-white/35 bg-black/30 px-5 py-3 text-lg font-semibold text-white backdrop-blur-[1px]">
+                &#9193; 10s
+              </div>
+            </div>
+          ) : null}
         </div>
-      ) : null}
+      </div>
     </main>
   );
 }
