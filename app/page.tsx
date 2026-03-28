@@ -34,7 +34,7 @@ export default function Home() {
             center.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
+        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row flex-wrap">
           <a
             className="flex h-12 w-full items-center justify-center rounded-full bg-black px-5 text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-100 dark:text-black dark:hover:bg-zinc-300 md:w-[190px]"
             href="/memory"
@@ -63,6 +63,27 @@ export default function Home() {
             rel="noopener noreferrer"
           >
             Documentation
+          </a>
+        </div>
+
+        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row flex-wrap mt-4">
+          <a
+            className="flex h-12 w-full items-center justify-center rounded-full bg-zinc-800 px-5 text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-200 dark:text-black dark:hover:bg-white md:w-[190px]"
+            href="/video1"
+          >
+            Open Video 1
+          </a>
+          <a
+            className="flex h-12 w-full items-center justify-center rounded-full bg-zinc-800 px-5 text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-200 dark:text-black dark:hover:bg-white md:w-[190px]"
+            href="/video2"
+          >
+            Open Video 2
+          </a>
+          <a
+            className="flex h-12 w-full items-center justify-center rounded-full bg-zinc-800 px-5 text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-200 dark:text-black dark:hover:bg-white md:w-[190px]"
+            href="/video3"
+          >
+            Open Video 3
           </a>
         </div>
       </main>
