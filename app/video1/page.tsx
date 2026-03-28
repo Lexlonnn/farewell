@@ -2,12 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-type IOSVideoElement = HTMLVideoElement & {
-  webkitEnterFullscreen?: () => void;
-};
-
 export default function MemoryPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [hasStarted, setHasStarted] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [actionIcon, setActionIcon] = useState<"forward" | null>(null);
   const tapTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -35,22 +32,11 @@ export default function MemoryPage() {
       video.currentTime = 0;
       await video.play();
 
-      // Some browsers support fullscreen only after a user gesture.
-      if (document.fullscreenElement == null) {
-        try {
-          await video.requestFullscreen();
-        } catch {
-          (video as IOSVideoElement).webkitEnterFullscreen?.();
-        }
-      }
-
       setIsPaused(false);
     } catch {}
   }, []);
 
   useEffect(() => {
-    void startPlayback();
-
     return () => {
       if (tapTimeoutRef.current) {
         clearTimeout(tapTimeoutRef.current);
@@ -88,6 +74,12 @@ export default function MemoryPage() {
   }, [showActionIcon]);
 
   const handleTap = useCallback(() => {
+    if (!hasStarted) {
+      setHasStarted(true);
+      void startPlayback();
+      return;
+    }
+
     const now = Date.now();
     const isDoubleTap = now - lastTapRef.current < 280;
 
@@ -106,7 +98,7 @@ export default function MemoryPage() {
       void togglePausePlay();
       tapTimeoutRef.current = null;
     }, 280);
-  }, [fastForward, togglePausePlay]);
+  }, [fastForward, hasStarted, startPlayback, togglePausePlay]);
 
   return (
     <main className="fixed inset-0 bg-black flex items-center justify-center" onPointerUp={handleTap}>
@@ -118,14 +110,13 @@ export default function MemoryPage() {
               ref={videoRef}
               className="w-full h-full object-cover bg-black"
               src="/memory-video.mp4"
-              autoPlay
               playsInline
               preload="auto"
               onPlay={() => setIsPaused(false)}
               onPause={() => setIsPaused(true)}
             />
 
-            {isPaused ? (
+            {hasStarted && isPaused ? (
               <div className="pointer-events-none absolute inset-0 flex items-center justify-center p-4">
                 <div className="rounded-full border border-white/35 bg-black/30 px-5 py-3 text-2xl text-white backdrop-blur-[1px]">
                   &#10074;&#10074;
@@ -148,6 +139,14 @@ export default function MemoryPage() {
               Memories that last forever
             </p>
           </div>
+
+          {!hasStarted ? (
+            <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-black/55 p-4">
+              <div className="font-serif text-lg font-medium tracking-[0.12em] text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.65)]">
+                Tap to play
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
     </main>
