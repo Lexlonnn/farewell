@@ -112,33 +112,42 @@ export default function MemoryPage() {
     <main className="fixed inset-0 bg-black flex items-center justify-center" onPointerUp={handleTap}>
       <div className="relative w-full h-full max-w-lg max-h-screen flex items-center justify-center" style={{perspective: '1000px'}}>
         {/* Polaroid Frame */}
-        <div className="bg-white p-4 pb-12 shadow-2xl relative" style={{aspectRatio: '3/4'}}>
-          <video
-            ref={videoRef}
-            className="w-full h-full object-cover bg-black"
-            src="/memory-video.mp4"
-            autoPlay
-            playsInline
-            preload="auto"
-            onPlay={() => setIsPaused(false)}
-            onPause={() => setIsPaused(true)}
-          />
+        <div className="bg-white p-4 pb-12 shadow-2xl relative flex flex-col" style={{aspectRatio: '3/4'}}>
+          <div className="flex-1 relative min-h-0">
+            <video
+              ref={videoRef}
+              className="w-full h-full object-cover bg-black"
+              src="/memory-video.mp4"
+              autoPlay
+              playsInline
+              preload="auto"
+              onPlay={() => setIsPaused(false)}
+              onPause={() => setIsPaused(true)}
+            />
 
-          {isPaused ? (
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-center p-4">
-              <div className="rounded-full border border-white/35 bg-black/30 px-5 py-3 text-2xl text-white backdrop-blur-[1px]">
-                &#10074;&#10074;
+            {isPaused ? (
+              <div className="pointer-events-none absolute inset-0 flex items-center justify-center p-4">
+                <div className="rounded-full border border-white/35 bg-black/30 px-5 py-3 text-2xl text-white backdrop-blur-[1px]">
+                  &#10074;&#10074;
+                </div>
               </div>
-            </div>
-          ) : null}
+            ) : null}
 
-          {actionIcon === "forward" ? (
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-center p-4">
-              <div className="rounded-full border border-white/35 bg-black/30 px-5 py-3 text-lg font-semibold text-white backdrop-blur-[1px]">
-                &#9193; 10s
+            {actionIcon === "forward" ? (
+              <div className="pointer-events-none absolute inset-0 flex items-center justify-center p-4">
+                <div className="rounded-full border border-white/35 bg-black/30 px-5 py-3 text-lg font-semibold text-white backdrop-blur-[1px]">
+                  &#9193; 10s
+                </div>
               </div>
-            </div>
-          ) : null}
+            ) : null}
+          </div>
+
+          {/* Caption */}
+          <div className="text-center pt-2">
+            <p className="text-s text-gray-600 font-light italic">
+              Memories that last forever
+            </p>
+          </div>
         </div>
       </div>
     </main>
