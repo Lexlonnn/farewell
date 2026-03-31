@@ -117,7 +117,7 @@ export default function MemoryPage() {
             <video
               ref={videoRef}
               className="w-full h-full object-cover bg-black"
-              src="/memory-video.mp4"
+              src="/csec.mov"
               autoPlay
               playsInline
               preload="auto"
