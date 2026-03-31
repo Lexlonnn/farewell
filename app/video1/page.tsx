@@ -109,7 +109,7 @@ export default function MemoryPage() {
             <video
               ref={videoRef}
               className="w-full h-full object-cover bg-black"
-              src="/memory-video.mp4"
+              src="/csea.mov"
               playsInline
               preload="auto"
               onPlay={() => setIsPaused(false)}
